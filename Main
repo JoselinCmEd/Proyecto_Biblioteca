@@ -1,0 +1,196 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Comparator;
+import java.io.InputStreamReader;
+import java.io.*;
+import java.util.List;
+
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+       
+        //Pila pila = new Pila(20);
+        //Cola cola = new Cola(20);
+        String rutaArchivo = "biblioteca_catalogo.csv";
+        BufferedReader mn = new BufferedReader(new InputStreamReader(System.in));
+         Biblioteca biblioteca = new Biblioteca(3000);
+         SolicitudLibro cola = new SolicitudLibro(3000);    
+        AutoresBusqueda listaLibros = new AutoresBusqueda();
+        GrafoLibros grafo = new GrafoLibros();
+        
+
+         
+           ArbolAVL arbolPorId = new ArbolAVL(new Comparator<Libro>() {
+            public int compare(Libro c1, Libro c2) {
+                return Integer.compare(c1.id, c2.id);
+            }
+        });
+
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(rutaArchivo))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                String[] datos = linea.split(",");
+                if (datos.length < 6) continue;
+                int id;
+                String titulo = datos[1].trim();
+                String autor = datos[2].trim();
+                String categoria = datos[3].trim();
+                int copias;
+                double precio;
+                
+
+                try {
+                    id = Integer.parseInt(datos[0].trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("Id inválida en la línea: " + linea);
+                    continue;
+                }
+                 try {
+                    copias = Integer.parseInt(datos[4].trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("Cantidad inválida en la línea: " + linea);
+                    continue;
+                }
+                 try {
+                    precio = Double.parseDouble(datos[5].trim());
+                } catch (NumberFormatException e) {
+                    System.out.println("Precio inválida en la línea: " + linea);
+                    continue;
+                }
+                
+
+                Libro libro = new Libro(id,titulo,autor, categoria, copias, precio);
+                arbolPorId.insertar(libro);
+
+             
+                  biblioteca.agregarLibro(libro);
+                  cola.agregar(libro);
+                  listaLibros.agregarLibro(libro);
+                  grafo.agregarLibro(libro);
+                   
+                }     
+        }
+        
+ 
+        while (true) {
+            System.out.println("\nMenú:");
+            System.out.println("1= Ordenar por Id");
+            System.out.println("2= Buscar por Id");
+            System.out.println("3= Ordenar por Precio");
+            System.out.println("4= Buscar por autor");
+            System.out.println("5= Aprobar el libro solicitado");
+            System.out.println("6= Solicitar un libro por Id  ");
+            System.out.println("7=Relacionar Grafo");
+            System.out.println("8=Agregar Libro");
+            System.out.println("9=Eliminar Libro");
+            System.out.println("10: Agregar relacion libros");
+
+            
+            int menu = Integer.parseInt(mn.readLine());
+
+            switch (menu) {
+                case 1:
+                    System.out.println("Canciones ordenadas por Id:");
+                    arbolPorId.imprimir();
+                    break;
+
+                case 2:
+                    System.out.print("Ingrese el id del libro a buscar ");
+                    int idBusqueda = Integer.parseInt(mn.readLine());
+                    long inicioEjecucion2=System.nanoTime();
+                    Libro encontradaId = arbolPorId.buscar(new Libro(idBusqueda,"", "","", 0,0 ));
+                    System.out.println(encontradaId != null ? encontradaId : "Producto no encontrada");
+                    long finEjecucion2=System.nanoTime();
+                    System.out.println("Tiempo de ejecución = " + (finEjecucion2 - inicioEjecucion2) + " ms");
+                    break;
+                    
+
+                case 3:
+                    biblioteca.mostrarLibros();
+                    break;
+                    
+                case 4:
+                    System.out.print("Ingrese el nombre del autor a buscar: ");
+                   String autor = mn.readLine();
+                listaLibros.buscarPorAutor(autor);
+                 break;
+
+    
+                    
+              case 6:
+                     System.out.print("Ingrese el ID del libro a solicitar: ");
+                int idSolicitar = Integer.parseInt(mn.readLine());
+                System.out.println("Libro autorizado: " + cola.frente());
+                break;
+
+             case 5:
+            System.out.println("Libro autorizado: " + cola.eliminar());
+             break;
+             
+            case 7:
+              System.out.println("Conexiones entre libros (Grafo):");
+              grafo.mostrarGrafo();
+             break;
+             
+             case 8:
+                    System.out.print("Ingrese el Id del Libro: ");
+                    int nuevoId = Integer.parseInt(mn.readLine());
+                    System.out.print("Ingrese el titulo del Libro: ");
+                    String nuevoNombre = mn.readLine();
+                    System.out.print("Ingrese el autor del libro : ");
+                    String nuevoAutor = mn.readLine();
+                    System.out.print("Ingrese la categoria: ");
+                    String nuevoCategoria = mn.readLine();
+                    System.out.print("Ingrese las copias disponibles: ");
+                    int nuevasCopias = Integer.parseInt(mn.readLine());
+                    System.out.print("Ingrese el precio: ");
+                    int nuevoPrecio = Integer.parseInt(mn.readLine());
+                    Libro nuevoLibro = new Libro(nuevoId, nuevoNombre, nuevoAutor, nuevoCategoria, nuevasCopias,nuevoPrecio);
+                    arbolPorId.insertar(nuevoLibro);
+                    break;
+
+                case 9:
+                    System.out.print("Ingrese el nombre del libro a eliminar: ");
+                    String tituloEliminar = mn.readLine();
+                    Libro eliminada = arbolPorId.eliminar(new Libro(0, tituloEliminar, "", "", 0,0));
+                    if (eliminada != null) {
+                        arbolPorId.eliminar(eliminada);
+                        System.out.println("Libro eliminado.");
+                    } else {
+                        System.out.println("Libro no encontrado.");
+                    }
+                    break;
+                case 10:
+    System.out.println("Introduce los libros para conectar:");
+    System.out.print("Título del primer libro: ");
+    String titulo1 = mn.readLine();
+    System.out.print("Título del segundo libro: ");
+    String titulo2 = mn.readLine();
+    System.out.print("¿Deseas asignar un peso a la relación? (s/n): ");
+    String respuesta = mn.readLine();
+    
+    if (respuesta.equalsIgnoreCase("s")) {
+        System.out.print("Introduce el peso de la relación: ");
+        float peso = Float.parseFloat(mn.readLine());
+        
+        if (grafo.agregarArista(titulo1, titulo2, peso)) {
+            System.out.println("Relación agregada con peso.");
+        } else {
+            System.out.println("Error: Uno o ambos libros no existen en el grafo.");
+        }
+    } else {
+    
+        if (grafo.agregarArista(titulo1, titulo2)) {
+            System.out.println("Relación agregada sin peso.");
+        } else {
+            System.out.println("Error: Uno o ambos libros no existen en el grafo.");
+        }
+    }
+    break;
+
+        }
+    }
+}
+}
