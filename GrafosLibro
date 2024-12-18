@@ -1,0 +1,67 @@
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class GrafoLibros {
+    private Map<String, Arista> adjList;
+
+    public GrafoLibros() {
+        adjList = new HashMap<>();
+    }
+
+ 
+    public void agregarLibro(Libro libro) {
+        if (!adjList.containsKey(libro.getTitulo())) {
+            adjList.put(libro.getTitulo(), null); 
+            System.out.println("Libro agregado al grafo: " + libro.getTitulo());
+        }
+    }
+
+    
+    public boolean agregarArista(String titulo1, String titulo2, float peso) {
+        if (adjList.containsKey(titulo1) && adjList.containsKey(titulo2)) {
+            
+            Arista arista1 = new Arista(titulo2, peso);
+            Arista arista2 = new Arista(titulo1, peso);
+
+            
+            agregarAristaBidireccional(titulo1, arista1);
+            agregarAristaBidireccional(titulo2, arista2);
+
+            return true;
+        }
+        return false; 
+    }
+
+    
+    private void agregarAristaBidireccional(String titulo, Arista arista) {
+        Arista head = adjList.get(titulo);
+        if (head == null) {
+            adjList.put(titulo, arista);
+        } else {
+            Arista temp = head;
+            while (temp.getSiguiente() != null) {
+                temp = temp.getSiguiente();
+            }
+            temp.setSiguiente(arista);
+        }
+    }
+
+    
+    public boolean agregarArista(String titulo1, String titulo2) {
+        return agregarArista(titulo1, titulo2, 0); 
+    }
+
+    
+    public void mostrarGrafo() {
+        for (String titulo : adjList.keySet()) {
+            Arista arista = adjList.get(titulo);
+            System.out.print("Libro " + titulo + " --> ");
+            while (arista != null) {
+                System.out.print(arista.getDestino() + (arista.getPeso() > 0 ? " (Peso: " + arista.getPeso() + ")" : "") + " ");
+                arista = arista.getSiguiente();
+            }
+            System.out.println();
+        }
+    }
+}
