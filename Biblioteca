@@ -1,0 +1,80 @@
+import java.util.List;
+import java.util.ArrayList;
+
+public class Biblioteca {
+    private Libro[] libros;
+    private int cantidad;
+
+    public Biblioteca(int capacidad) {
+        libros = new Libro[capacidad];
+        cantidad = 0;
+    }
+
+    public boolean agregarLibro(Libro libro) {
+        if (cantidad < libros.length) {
+            libros[cantidad++] = libro;
+            return true;
+        } else {
+            System.out.println("No hay espacio para más libros.");
+            return false;
+        }
+    }
+
+    public void ordenarPorPrecio() {
+        quickSort(libros, 0, cantidad - 1);
+    }
+
+    private void quickSort(Libro[] array, int inicio, int fin) {
+        if (inicio < fin) {
+            int pivoteIndex = particion(array, inicio, fin);
+            quickSort(array, inicio, pivoteIndex - 1);
+            quickSort(array, pivoteIndex + 1, fin);
+        }
+    }
+
+    private int particion(Libro[] array, int inicio, int fin) {
+        double pivote = array[fin].getPrecio();
+        int i = inicio - 1;
+
+        for (int j = inicio; j < fin; j++) {
+            if (array[j].getPrecio() <= pivote) {
+                i++;
+                Libro temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
+
+        Libro temp = array[i + 1];
+        array[i + 1] = array[fin];
+        array[fin] = temp;
+
+        return i + 1;
+    }
+
+    public void mostrarLibros() {
+        if (cantidad == 0) {
+            System.out.println("No hay libros en la biblioteca.");
+        } else {
+            for (int i = 0; i < cantidad; i++) {
+                System.out.println(libros[i]);
+            }
+        }
+    }
+
+    public Libro buscarLibroPorId(int id) {
+        for (int i = 0; i < cantidad; i++) {
+            if (libros[i].getId() == id) {
+                return libros[i];
+            }
+        }
+        return null;
+    }
+    public List<Libro> getLibros() {
+    List<Libro> listaLibros = new ArrayList<>();
+    for (int i = 0; i < cantidad; i++) {
+        listaLibros.add(libros[i]);
+    }
+    return listaLibros;
+}
+}
