@@ -1,0 +1,45 @@
+ class Libro {
+    int id;
+    String titulo;
+    String autor;
+    String categoria;
+    int copias;
+    double precio; 
+
+    public Libro(int id, String titulo, String autor, String categoria, int copias, double precio) {
+        this.id = id;
+        this.titulo = titulo;
+        this.autor=autor;
+        this.categoria = categoria;
+        this.copias = copias;
+        this.precio = precio;
+    }
+     public int getId() {
+        return id;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public int getCopias() {
+        return copias;
+    }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public String toString() {
+        return String.format("Id: %d, Titulo: %s, Autor: %s Categoria: %s, Copias: %d, Precio: %.2f",
+                id, titulo, autor, categoria, copias, precio);
+    }
+}
