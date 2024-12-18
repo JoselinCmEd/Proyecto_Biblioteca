@@ -1,0 +1,44 @@
+public class SolicitudLibro {
+    private Libro[] cola;
+    private int frente, fin, tamano;
+
+    public SolicitudLibro(int capacidad) {
+        cola = new Libro[capacidad];
+        frente = 0;
+        fin = -1;
+        tamano = 0;
+    }
+
+    public boolean agregar(Libro libro) {
+        if (tamano < cola.length) {
+            fin = (fin + 1) % cola.length;
+            cola[fin] = libro;
+            tamano++;
+            return true;
+        } else {
+            System.out.println("La cola está llena.");
+            return false;
+        }
+    }
+
+    public Libro eliminar() {
+        if (tamano > 0) {
+            Libro libro = cola[frente];
+            frente = (frente + 1) % cola.length;
+            tamano--;
+            return libro;
+        } else {
+            System.out.println("La cola está vacía.");
+            return null;
+        }
+    }
+
+    public Libro frente() {
+        if (tamano > 0) {
+            return cola[frente];
+        } else {
+            System.out.println("La cola está vacía.");
+            return null;
+        }
+    }
+}
