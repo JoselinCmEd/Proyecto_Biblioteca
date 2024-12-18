@@ -1,0 +1,62 @@
+class AutoresBusqueda {
+    private Nodo cabeza;
+
+    public AutoresBusqueda() {
+        this.cabeza = null;
+    }
+
+    
+    public void agregarLibro(Libro libro) {
+        Nodo nuevoNodo = new Nodo(libro);
+        if (cabeza == null) {
+            cabeza = nuevoNodo;
+        } else {
+            Nodo actual = cabeza;
+            while (actual.siguiente != null) {
+                actual = actual.siguiente;
+            }
+            actual.siguiente = nuevoNodo;
+        }
+    }
+
+   
+    public void buscarPorAutor(String autor) {
+        Nodo actual = cabeza;
+        boolean encontrado = false;
+        System.out.println("Buscando libros por el autor: " + autor);
+        while (actual != null) {
+            if (actual.libro.getAutor().equalsIgnoreCase(autor)) {
+                System.out.println(actual.libro);
+                encontrado = true;
+            }
+            actual = actual.siguiente;
+        }
+        if (!encontrado) {
+            System.out.println("No se encontraron libros del autor: " + autor);
+        }
+    }
+
+   
+    public void mostrarLista() {
+        Nodo actual = cabeza;
+        if (cabeza == null) {
+            System.out.println("La lista está vacía.");
+            return;
+        }
+        System.out.println("Contenido de la lista enlazada:");
+        while (actual != null) {
+            System.out.println(actual.libro); 
+            actual = actual.siguiente;
+        }
+    }
+}
+
+class Nodo {
+    Libro libro;
+    Nodo siguiente;
+
+    public Nodo(Libro libro) {
+        this.libro = libro;
+        this.siguiente = null;
+    }
+}
